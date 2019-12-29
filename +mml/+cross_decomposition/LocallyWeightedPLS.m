@@ -38,6 +38,10 @@ classdef LocallyWeightedPLS < mml.base.BaseEstimator & mml.base.BaseRegressor
                 yPred(iSample, :) = xQuery * beta_;
             end
         end
+        function scoreVal = score(self, data, y, func)
+            if ~exist('func', 'var'), func = @(y,yp)mml.metrics.r2score(y,yp); end
+            scoreVal = func(y, self.predict(data));
+        end
     end
     methods(Access=private)
         function beta_ = nipals_(self, xMean, yMean, Omega, xQuery)
