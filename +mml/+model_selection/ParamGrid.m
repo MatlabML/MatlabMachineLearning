@@ -1,16 +1,15 @@
 classdef ParamGrid
-    %{
-        ParamGrid(paramsStructure)
-        Obtain grids
-        
-        >> params = struct();
-        >> params.svm__C = 1:10;
-        >> params.svm__gamma = 1:10;
-        >> pg = ParamGrid(params);
-        >> length(pg.grids)
-        ans =
-           100
-    %}
+    %% ParamGrid
+    % ParamGrid(paramsStructure)
+    % Obtain grids
+    %
+    % >> params = struct();
+    % >> params.svm__C = 1:10;
+    % >> params.svm__gamma = 1:10;
+    % >> pg = ParamGrid(params);
+    % >> length(pg.grids)
+    % ans =
+    %    100
     properties(GetAccess='public', SetAccess='private')
         grids
     end
