@@ -1,16 +1,21 @@
 classdef KFold
     properties
         nFold
+        randomState
     end
     methods
-        function self = KFold(nFold)
+        function self = KFold(nFold, randomState)
+            if~exist('randomState','var'),randomState=42;end
             self.nFold = nFold;
+            self.randomState = randomState;
         end
         function [indexTrain, indexTest] = split(self, X)
             nSample = size(X, 1);
             indexTrain = cell(1, self.nFold);
             indexTest = cell(1, self.nFold);
-            rng(42, 'twister');
+            if~isempty(self.randomState)
+                rng(self.randomState, 'twister');
+            end
             indexSample = mod(randperm(nSample), self.nFold);
             for iFold = 1 : self.nFold
                 indexTrain{iFold} = find(indexSample~=(iFold-1));
