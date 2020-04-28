@@ -33,6 +33,10 @@ classdef PLSRegression < mml.base.BaseEstimator & mml.base.BaseRegressor
             if ~exist('func', 'var'), func = @(y,yp)mml.metrics.r2score(y,yp); end
             scoreVal = func(y, self.predict(data));
         end
+        function tScore = transform(self, data, y)
+            if~exist('y', 'var'),y=[];end
+            tScore = (data - self.xMean_)./self.xStd_ * self.xLoading_;
+        end
         %% Model evaluation
         function self = fullModel(self, xSc, ySc)
             [betaInit_, self.weight_, self.xScore_, self.xLoading_, self.yLoading_] = ...

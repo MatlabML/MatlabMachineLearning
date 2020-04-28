@@ -38,17 +38,24 @@ classdef GridSearchCV < mml.base.BaseEstimator
                     self.estimator.fit(x(trainIdx{iFold},:), ...
                         y(trainIdx{iFold},:));
                     if strmatch(self.scoring, 'mean')
-                        localScore(iFold)=...
-                            self.estimator.score(x(testIdx{iFold},:),...
+                        scoreCv=self.estimator.score(x(testIdx{iFold},:),...
                             y(testIdx{iFold},:));
+                        if size(scoreCv,2)==1
+                            localScore(iFold) = scoreCv;
+                        else
+                            localScore(iFold)= prod(scoreCv);
+                            warning(['the correction using '...
+                                '`prod` is deprecated.']);
+                        end
                     else
-                        yCv(testIdx{iFold}) = self.estimator.predict(x(testIdx{iFold},:));
+                        yCv(testIdx{iFold},:) = self.estimator.predict(x(testIdx{iFold},:));
                     end
                 end
                 if strmatch(self.scoring, 'mean')
                     self.scores(iGrid) = mean(localScore);
                 else
-                    self.scores(iGrid) = mml.metrics.r2score(y, yCv);
+                    % TODO: consider the dimensions of Y
+                    self.scores(iGrid) = prod(mml.metrics.r2score(y, yCv));
                 end
             end
             indexMaxScore = find(self.scores==max(self.scores), 1);
