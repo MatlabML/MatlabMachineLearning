@@ -27,11 +27,11 @@ classdef DotProduct  < mml.gaussian_process.kernels.Kernel
                         X = s.subs{1};
                         K = squareform(pdist(X, @self.kernel));
                         nSamples = size(K,1);
-                        K = K + arrayfun(@(i)X(i,:)*X(i,:)',1:nSamples);
+                        K = K + diag(arrayfun(@(i)X(i,:)*X(i,:)',1:nSamples));
                         varargout = { K };
                     elseif length(s.subs)==2
                         [X,Y] = s.subs{:};
-                        varargout = {cdist(X,Y,@self.kernel)};
+                        varargout = {self.kernel(X,Y)};
                     else
                         error('the number of input: %d',length(s.subs));
                     end
@@ -44,7 +44,7 @@ classdef DotProduct  < mml.gaussian_process.kernels.Kernel
             end
         end
         function ret = kernel(self,x,y)
-            ret = y * x';
+            ret = y * x' + self.sigma0 ^2;
         end
     end
 end
