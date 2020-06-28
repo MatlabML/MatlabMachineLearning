@@ -1,4 +1,4 @@
-classdef(Abstract) BaseEstimator < handle
+classdef(Abstract) BaseEstimator < matlab.mixin.Copyable%handle
     methods
         fit
         function self = setParams(self, params)
