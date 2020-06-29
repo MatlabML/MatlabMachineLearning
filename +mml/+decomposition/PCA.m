@@ -25,19 +25,24 @@ classdef PCA < mml.base.BaseEstimator & mml.base.TransformerMixin
         end
         function self = fit(self, x, ~)
             self.mean_ = mean(x, 1);
-            Xstd = (x - self.mean_);
             if self.scaling
                 self.std_ = std(x, 1);
-                Xstd = Xstd ./ self.std_;
+            else
+                self.std_ = ones(size(self.mean_));
             end
-            [self.loadings, D] = eig(Xstd' * Xstd);%, self.nComps
-            lambda_ = diag(D);
-            lambda_ = lambda_(end:-1:1);
-            self.explainedVariances = lambda_;
-            self.explainedVariancesRatio = lambda_ ./ sum(lambda_);
+            Xstd = self.autoscaling(x);
+            disp('V shape');
+            disp(size(Xstd' * Xstd));
+            [P, D] = eig(Xstd' * Xstd);
+            EV = diag(D);
+            ix=cell2mat(arrayfun(@(c)find(c==EV),sort(EV, 'descend'),'un',0))';
+            
+            self.loadings = P(:, ix);
+            self.explainedVariances = EV;
+            self.explainedVariancesRatio = EV ./ sum(EV);
         end
         function xTr = transform(self, data)
-            xTr = self.autoscaling(data) * self.loadings;
+            xTr = self.autoscaling(data) * self.loadings(:, 1:self.nComps);
         end
     end
     methods(Access=private)
