@@ -10,17 +10,17 @@ classdef PCA < mml.base.BaseEstimator & mml.base.TransformerMixin
     properties
         mean_% mean
         std_% standard deviation of variables
-        nComps
+        nComp
         scaling
         loadings
         explainedVariances
         explainedVariancesRatio
     end
     methods
-        function self = PCA(nComps, scaling)
-            if~exist('nComps','var'),nComps=2;end
+        function self = PCA(nComp, scaling)
+            if~exist('nComp','var'),nComp=2;end
             if~exist('scaling','var'),scaling=true;end
-            self.nComps = nComps;
+            self.nComp = nComp;
             self.scaling = scaling;
         end
         function self = fit(self, x, ~)
@@ -31,18 +31,21 @@ classdef PCA < mml.base.BaseEstimator & mml.base.TransformerMixin
                 self.std_ = ones(size(self.mean_));
             end
             Xstd = self.autoscaling(x);
-            disp('V shape');
-            disp(size(Xstd' * Xstd));
             [P, D] = eig(Xstd' * Xstd);
-            EV = diag(D);
+            EV = diag(D)';
             ix=cell2mat(arrayfun(@(c)find(c==EV),sort(EV, 'descend'),'un',0))';
             
             self.loadings = P(:, ix);
-            self.explainedVariances = EV;
-            self.explainedVariancesRatio = EV ./ sum(EV);
+            self.explainedVariances = EV(ix);
+            vratio = EV(ix) ./ sum(EV);
+            self.explainedVariancesRatio = vratio(1:self.nComp);
         end
-        function xTr = transform(self, data)
-            xTr = self.autoscaling(data) * self.loadings(:, 1:self.nComps);
+        function tTr = transform(self, data)
+            tTr = self.autoscaling(data) * self.loadings(:, 1:self.nComp);
+        end
+        function xRepro = inverseTransform(self, scores)
+            xRotate = scores * self.loadings(:, 1:self.nComp)';
+            xRepro  = self.autoscaling_inv(xRotate);
         end
     end
     methods(Access=private)
@@ -51,6 +54,13 @@ classdef PCA < mml.base.BaseEstimator & mml.base.TransformerMixin
                 xScale = rawData - self.mean_ ./ self.std_;
             else
                 xScale = (rawData - self.mean_);
+            end
+        end
+        function xRepro = autoscaling_inv(self, data)
+            if self.scaling
+                xRepro = data * self.std_ + self.mean_;
+            else
+                xRepro = data + self.mean_;
             end
         end
     end
