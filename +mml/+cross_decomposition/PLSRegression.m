@@ -37,6 +37,9 @@ classdef PLSRegression < mml.base.BaseEstimator & mml.base.BaseRegressor
             if~exist('y', 'var'),y=[];end
             tScore = (data - self.xMean_)./self.xStd_ * self.xLoading_;
         end
+        function dataHat = inverseTransform(self, tscores)
+            dataHat = tscores * self.xLoading_' .* self.xStd_ + self.xMean_;
+        end
         %% Model evaluation
         function self = fullModel(self, xSc, ySc)
             [betaInit_, self.weight_, self.xScore_, self.xLoading_, self.yLoading_] = ...
