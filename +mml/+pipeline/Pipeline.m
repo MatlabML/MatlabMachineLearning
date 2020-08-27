@@ -67,7 +67,11 @@ classdef Pipeline < mml.base.BaseEstimator
             end
         end
         function yPred = predict(self, data)
-            xTr = self.transform(data);
+            xTr = data;
+            nSteps = length(self.steps);
+            for iStep = 1 : (nSteps - 1)
+                xTr = self.steps{iStep}.transform(xTr);
+            end
             yPred = self.steps{end}.predict(xTr);
         end
         function val = get(self, methodName, data)
@@ -75,7 +79,11 @@ classdef Pipeline < mml.base.BaseEstimator
             val = self.steps{end}.(methodName)(xTr);
         end
         function scoreVal = score(self, data, y)
-            xTc = self.transform(data);
+            xTc = data;
+            nSteps = length(self.steps);
+            for iStep = 1 : (nSteps - 1)
+                xTc = self.steps{iStep}.transform(xTc);
+            end
             scoreVal = self.steps{end}.score(xTc, y);
         end
         function self = setParams(self, structure)
