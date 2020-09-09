@@ -16,16 +16,16 @@ function varargout = loadShootout(returnXy, dataMode)
 % >> data = mml.datasets.loadShootout(false);
 % >> data
 % data = 
-%   ƒtƒB[ƒ‹ƒh‚ð‚à‚Â struct:
-%     calibrate_1: [1~1 struct]
-%     calibrate_2: [1~1 struct]
-%     calibrate_Y: [1~1 struct]
-%      validate_1: [1~1 struct]
-%      validate_2: [1~1 struct]
-%      validate_Y: [1~1 struct]
-%          test_1: [1~1 struct]
-%          test_2: [1~1 struct]
-%          test_Y: [1~1 struct]
+%   ï¿½tï¿½Bï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ struct:
+%     calibrate_1: [1ï¿½~1 struct]
+%     calibrate_2: [1ï¿½~1 struct]
+%     calibrate_Y: [1ï¿½~1 struct]
+%      validate_1: [1ï¿½~1 struct]
+%      validate_2: [1ï¿½~1 struct]
+%      validate_Y: [1ï¿½~1 struct]
+%          test_1: [1ï¿½~1 struct]
+%          test_2: [1ï¿½~1 struct]
+%          test_Y: [1ï¿½~1 struct]
 
 
 warning('off', 'all');% turn off warnings.
@@ -43,12 +43,12 @@ switch dataMode
 end
 
 try
-    load('+mml\+datasets\nir_shootout_2002.mat');
+    load('+mml/+datasets/nir_shootout_2002.mat');
 catch
     warning('There is no nir_shootout_2002.mat file, so now downloading the file from eigenvector site.');
     url='http://www.eigenvector.com/data/tablets/nir_shootout_2002.mat';
-    [A, cURL_out] = system(['curl ' url '> +mml/+datasets/nir_shootout_2002.mat']);
-    load('+mml\+datasets\nir_shootout_2002.mat');
+    [A, cURL_out] = system(['curl ' url ' > +mml/+datasets/nir_shootout_2002.mat']);
+    load('+mml/+datasets/nir_shootout_2002.mat');
 end
 
 
